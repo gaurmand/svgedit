@@ -5,9 +5,12 @@
 
 class EditView : public QWidget
 {
-    Q_OBJECT
+   Q_OBJECT
 public:
-    EditView(QWidget *parent = nullptr);
+   EditView(QWidget *parent = nullptr);
+
+private:
+   QAction* open_ = nullptr;
 };
 
 #endif // EDITVIEW_H
