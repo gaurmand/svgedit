@@ -1,14 +1,17 @@
 #ifndef SVGPARSER_H
 #define SVGPARSER_H
 
+#include "svgmodel.h"
+
 #include <QObject>
-#include <QDomDocument>
+
+#include <memory>
 
 class QIODevice;
 
 namespace SVG
 {
-   void parse(QIODevice* device);
+   std::unique_ptr<SVGModel> parse(QIODevice* svgDevice);
 }
 
 #endif // SVGPARSER_H

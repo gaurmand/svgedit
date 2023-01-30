@@ -34,6 +34,6 @@ void MainWindow::openSVGFile()
       return;
    }
 
-   SVG::parse(&file);
+   std::unique_ptr<SVGModel> svgModel = SVG::parse(&file);
 }
 

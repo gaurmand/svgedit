@@ -1,4 +1,8 @@
 #include "svgparser.h"
+#include "svgmodel.h"
+
+#include <QDomDocument>
+#include <QDebug> 
 
 namespace
 {
@@ -21,13 +25,14 @@ void printDOM(const QDomNode& root)
 namespace SVG
 {
 
-void parse(QIODevice* device)
+std::unique_ptr<SVGModel> parse(QIODevice* svgDevice)
 {
    QDomDocument doc;
-   doc.setContent(device, false);
+   doc.setContent(svgDevice, false);
 
    printDOM(doc.documentElement());
+
+   return std::make_unique<SVGModel>(doc);
 }
 
 }
-
