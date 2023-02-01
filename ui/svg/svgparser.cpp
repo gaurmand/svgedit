@@ -30,7 +30,7 @@ std::unique_ptr<SVGModel> parse(QIODevice* svgDevice)
    QDomDocument doc;
    doc.setContent(svgDevice, false);
 
-   printDOM(doc.documentElement());
+   //printDOM(doc.documentElement());
 
    return std::make_unique<SVGModel>(doc);
 }

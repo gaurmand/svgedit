@@ -2,22 +2,29 @@
 
 #include <QWidget>
 #include <QDomDocument>
+#include <QDebug>
 
 namespace
 {
 
-void constructModel(const QDomNode& DOMRoot, SVGItem* modelRoot)
+void constructModel(const QDomElement& DOMElement, SVGItem* modelItem)
 {
-   QDomNode child = DOMRoot.firstChild();
+   QDomElement child = DOMElement.firstChildElement();
    while (!child.isNull())
    {
-      QDomElement childElem = child.toElement();
-      if (!childElem.isNull())
-      {
-         SVGItem* childItem = modelRoot->appendChild(SVGItem::elementTypeFromString(childElem.tagName()));
-         constructModel(child, childItem);
-      }
-      child = child.nextSibling();
+      SVGItem* childItem = modelItem->appendChild(SVGItem::elementTypeFromString(child.tagName()));
+      constructModel(child, childItem);
+      child = child.nextSiblingElement();
+   }
+}
+
+void printTree(SVGItem* item, int depth = 0)
+{
+   QString indent(2*depth, ' ');
+   qDebug().nospace().noquote() << indent << SVGItem::stringFromElementType(item->type());
+   for(int i = 0; i < item->numChildren(); ++i)
+   {
+      printTree(item->childAt(i), depth + 1);
    }
 }
 
@@ -25,13 +32,13 @@ void constructModel(const QDomNode& DOMRoot, SVGItem* modelRoot)
 
 SVGModel::SVGModel(const QDomDocument& svg, QWidget* parent) : QAbstractItemModel(parent)
 {
-   constructModel(svg.documentElement(), &root_);
+   SVGItem* svgRoot = root_.appendChild(SVGElementType::svg);
+   constructModel(svg.documentElement(), svgRoot);
+   printTree(&root_);
 }
 
 QModelIndex SVGModel::index(int row, int column, const QModelIndex& parent) const
 {
-   Q_UNUSED(column);
-
    if (!hasIndex(row, column, parent))
    {
       return QModelIndex();
@@ -43,28 +50,21 @@ QModelIndex SVGModel::index(int row, int column, const QModelIndex& parent) cons
    const SVGItem* item = parentItem->childAt(row);
    assert(item != nullptr);
 
-   return createIndex(row, 0, item);
+   return createIndex(row, column, item);
 }
 
 QModelIndex SVGModel::parent(const QModelIndex& index) const 
 {
-   if (!index.isValid())
-   {
-      return QModelIndex();
-   }
-
    const SVGItem* item = itemFromIndex(index);
    assert(item != nullptr);
 
    const SVGItem* parentItem = item->parent();
-   assert(parentItem != nullptr);
-
-   if (parentItem == &root_)
+   if (parentItem == nullptr || parentItem == &root_)
    {
       return QModelIndex();
    }
 
-   return createIndex(parentItem->row(), 0, item); 
+   return createIndex(parentItem->row(), 0, parentItem); 
 }
 
 int SVGModel::rowCount(const QModelIndex& parent) const
