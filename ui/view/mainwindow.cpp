@@ -11,7 +11,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-   setCentralWidget(new EditView);
+   editor_ = new EditView;
+   setCentralWidget(editor_);
 
    auto* open = new QAction(tr("Open SVG file"), this);
    open->setShortcut(QKeySequence::Open);
@@ -34,6 +35,11 @@ void MainWindow::openSVGFile()
       return;
    }
 
-   std::unique_ptr<SVGModel> svgModel = SVG::parse(&file);
+   if (model_)
+   {
+      model_.reset();
+   }
+   model_ = SVG::parse(&file);
+   editor_->setSVGModel(model_.get());
 }
 

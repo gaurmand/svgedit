@@ -28,12 +28,12 @@ public:
 
    SVGElementType type() const {return type_; }
    int numChildren() const;
-   SVGItem* childAt(int row);
    const SVGItem* childAt(int row) const;
-   SVGItem* parent() { return parent_; }
    const SVGItem* parent() const { return parent_; }
    int row() const;
 
+   SVGItem* childAt(int row);
+   SVGItem* parent() { return parent_; }
    SVGItem* appendChild(SVGElementType type);
 
 private:
@@ -54,6 +54,7 @@ public:
    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
    QVariant data(const QModelIndex& index, int role) const override;
    Qt::ItemFlags flags(const QModelIndex& index) const override;
+   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 private:
    const SVGItem* itemFromIndex(const QModelIndex& index) const;

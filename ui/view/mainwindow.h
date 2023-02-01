@@ -1,9 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "../svg/svgparser.h"
+#include "../svg/svgmodel.h"
 
 #include <QMainWindow>
+
+class EditView;
 
 class MainWindow : public QMainWindow
 {
@@ -13,6 +15,10 @@ public:
 
 public slots:
    void openSVGFile();
+
+private:
+   EditView* editor_                = nullptr;
+   std::unique_ptr<SVGModel> model_ = nullptr;
 };
 
 #endif // MAINWINDOW_H

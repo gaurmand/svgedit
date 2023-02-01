@@ -23,10 +23,10 @@ int SVGItem::row() const
 {
    if (parent_)
    {
-      auto res = std::find(parent_->children_.cbegin(), parent_->children_.cend(), const_cast<SVGItem*>(this));
-      if(res != parent_->children_.cend())
+      auto it = std::find(parent_->children_.begin(), parent_->children_.end(), const_cast<SVGItem*>(this));
+      if(it != parent_->children_.end())
       {
-         return std::distance(parent_->children_.cbegin(), res);
+         return std::distance(parent_->children_.begin(), it);
       }
 
       throw std::runtime_error("SVGItem is not a child of its parent");
@@ -102,6 +102,11 @@ int SVGModel::columnCount(const QModelIndex& parent) const
 
 QVariant SVGModel::data(const QModelIndex& index, int role) const 
 {
+   if (!index.isValid())
+   {
+      return QVariant();
+   }
+
    if (role != Qt::DisplayRole)
    {
       return QVariant();
@@ -134,8 +139,22 @@ QVariant SVGModel::data(const QModelIndex& index, int role) const
 
 Qt::ItemFlags SVGModel::flags(const QModelIndex& index) const
 {
-   Q_UNUSED(index);
-   return Qt::ItemIsSelectable;
+    if (!index.isValid())
+    {
+        return Qt::NoItemFlags;
+    }
+
+   return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+}
+
+QVariant SVGModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+   if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+   {
+      return tr("SVG Element");
+   }
+
+   return QVariant();
 }
 
 const SVGItem* SVGModel::itemFromIndex(const QModelIndex& index) const
