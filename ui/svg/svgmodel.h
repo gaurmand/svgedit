@@ -26,7 +26,7 @@ private:
    const SVGItem* itemFromIndex(const QModelIndex& index) const;
 
 private:
-   SVGItem root_ = SVGItem(SVGElementType::Root);
+   SVGItem root_ = SVGItem(SVGElementType::svg);
 };
 
 #endif // SVG_MODEL_H

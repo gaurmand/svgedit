@@ -3,9 +3,29 @@
 #include <QWidget>
 #include <QDomDocument>
 
-SVGModel::SVGModel(const QDomDocument& svg, QWidget* parent) : QAbstractItemModel(parent)
+namespace
 {
 
+void constructModel(const QDomNode& DOMRoot, SVGItem* modelRoot)
+{
+   QDomNode child = DOMRoot.firstChild();
+   while (!child.isNull())
+   {
+      QDomElement childElem = child.toElement();
+      if (!childElem.isNull())
+      {
+         SVGItem* childItem = modelRoot->appendChild(SVGItem::elementTypeFromString(childElem.tagName()));
+         constructModel(child, childItem);
+      }
+      child = child.nextSibling();
+   }
+}
+
+}
+
+SVGModel::SVGModel(const QDomDocument& svg, QWidget* parent) : QAbstractItemModel(parent)
+{
+   constructModel(svg.documentElement(), &root_);
 }
 
 QModelIndex SVGModel::index(int row, int column, const QModelIndex& parent) const
@@ -76,26 +96,7 @@ QVariant SVGModel::data(const QModelIndex& index, int role) const
    const SVGItem* item = itemFromIndex(index);
    assert(item != nullptr);
 
-   switch (item->type())
-   {
-      case SVGElementType::Root:
-         return tr("svg");
-      case SVGElementType::Rect:
-         return tr("rect");
-      case SVGElementType::Circle:
-         return tr("circle");
-      case SVGElementType::Ellipse:
-         return tr("ellipse");
-      case SVGElementType::Text:
-         return tr("text");
-      case SVGElementType::Line:
-         return tr("line");
-      case SVGElementType::PolyLine:
-         return tr("polyline");
-      case SVGElementType::None:
-      default:
-         return QVariant();
-   }
+   return SVGItem::stringFromElementType(item->type());
 }
 
 Qt::ItemFlags SVGModel::flags(const QModelIndex& index) const

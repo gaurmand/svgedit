@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <stdexcept>
 
+
+
 int SVGItem::numChildren() const
 {
    return children_.size();
@@ -38,4 +40,82 @@ SVGItem* SVGItem::appendChild(SVGElementType type)
 {
    children_.push_back(new SVGItem(type, this));
    return children_.back();
+}
+
+SVGElementType SVGItem::elementTypeFromString(const QString& tagName)
+{
+   if (tagName == "circle")
+   {
+      return SVGElementType::circle;
+   }
+   else if (tagName == "ellipse")
+   {
+      return SVGElementType::ellipse;
+   }
+   else if (tagName == "g")
+   {
+      return SVGElementType::g;
+   }
+   else if (tagName == "line")
+   {
+      return SVGElementType::line;
+   }
+   else if (tagName == "path")
+   {
+      return SVGElementType::path;
+   }
+   else if (tagName == "polyline")
+   {
+      return SVGElementType::polyline;
+   }
+   else if (tagName == "polygon")
+   {
+      return SVGElementType::polygon;
+   }
+   else if (tagName == "rect")
+   {
+      return SVGElementType::rect;
+   }
+   else if (tagName == "svg")
+   {
+      return SVGElementType::svg;
+   }
+   else if (tagName == "text")
+   {
+      return SVGElementType::text;
+   }
+   else
+   {
+      return SVGElementType::unknown;
+   }
+}
+
+QString SVGItem::stringFromElementType(const SVGElementType type)
+{
+   switch (type)
+   {
+      case SVGElementType::circle:
+         return "circle";
+      case SVGElementType::ellipse:
+         return "ellipse";
+      case SVGElementType::g:
+         return "g";
+      case SVGElementType::line:
+         return "line";
+      case SVGElementType::path:
+         return "path";
+      case SVGElementType::polyline:
+         return "polyline";
+      case SVGElementType::polygon:
+         return "polygon";
+      case SVGElementType::rect:
+         return "rect";
+      case SVGElementType::svg:
+         return "svg";
+      case SVGElementType::text:
+         return "text";
+      case SVGElementType::unknown:
+      default:
+         return "unknown";
+   }
 }

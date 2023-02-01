@@ -3,16 +3,21 @@
 
 #include <vector>
 
+#include <QString>
+
 enum class SVGElementType
 {
-   None,
-   Root,
-   Rect,
-   Circle,
-   Ellipse,
-   Text,
-   Line,
-   PolyLine
+   unknown,
+   circle,
+   ellipse,
+   g,
+   line,
+   path,
+   polyline,
+   polygon,
+   rect,
+   svg,
+   text,
 };
 
 class SVGItem
@@ -32,8 +37,11 @@ public:
    SVGItem* parent() { return parent_; }
    SVGItem* appendChild(SVGElementType type);
 
+   static SVGElementType elementTypeFromString(const QString& tagName);
+   static QString stringFromElementType(const SVGElementType type);
+
 private:
-   SVGElementType type_ = SVGElementType::None;
+   SVGElementType type_ = SVGElementType::unknown;
    std::vector<SVGItem*> children_;
    SVGItem* parent_ = nullptr;
 };
