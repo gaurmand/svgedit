@@ -26,7 +26,7 @@ private:
    const SVGItem* itemFromIndex(const QModelIndex& index) const;
 
 private:
-   SVGItem root_;
+   std::unique_ptr<SVGItem> root_ = std::make_unique<SVGItem>();
 };
 
 #endif // SVG_MODEL_H

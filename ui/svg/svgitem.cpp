@@ -3,7 +3,13 @@
 #include <algorithm>
 #include <stdexcept>
 
-
+SVGItem::~SVGItem()
+{
+   for (int i = 0; i < children_.size(); ++i)
+   {
+      delete children_.at(i);
+   }
+}
 
 int SVGItem::numChildren() const
 {

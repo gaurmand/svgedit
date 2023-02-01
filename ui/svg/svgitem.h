@@ -26,6 +26,7 @@ public:
    SVGItem() {}
    SVGItem(SVGElementType type) : type_(type) {}
    SVGItem(SVGElementType type, SVGItem* parent) : type_(type), parent_(parent) {}
+   virtual ~SVGItem();
 
    SVGElementType type() const {return type_; }
    int numChildren() const;

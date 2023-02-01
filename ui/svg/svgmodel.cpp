@@ -32,9 +32,9 @@ void printTree(SVGItem* item, int depth = 0)
 
 SVGModel::SVGModel(const QDomDocument& svg, QWidget* parent) : QAbstractItemModel(parent)
 {
-   SVGItem* svgRoot = root_.appendChild(SVGElementType::svg);
+   SVGItem* svgRoot = root_->appendChild(SVGElementType::svg);
    constructModel(svg.documentElement(), svgRoot);
-   printTree(&root_);
+   printTree(root_.get());
 }
 
 QModelIndex SVGModel::index(int row, int column, const QModelIndex& parent) const
@@ -59,7 +59,7 @@ QModelIndex SVGModel::parent(const QModelIndex& index) const
    assert(item != nullptr);
 
    const SVGItem* parentItem = item->parent();
-   if (parentItem == nullptr || parentItem == &root_)
+   if (parentItem == nullptr || parentItem == root_.get())
    {
       return QModelIndex();
    }
@@ -121,6 +121,6 @@ QVariant SVGModel::headerData(int section, Qt::Orientation orientation, int role
 
 const SVGItem* SVGModel::itemFromIndex(const QModelIndex& index) const
 {
-   return index.isValid() ? static_cast<const SVGItem*>(index.constInternalPointer()) : &root_;
+   return index.isValid() ? static_cast<const SVGItem*>(index.constInternalPointer()) : root_.get();
 }
 
