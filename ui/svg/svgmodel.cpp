@@ -7,13 +7,27 @@
 namespace
 {
 
-void constructModel(const QDomElement& DOMElement, SVGItem* modelItem)
+void setAttributesFromElem(const QDomElement& elem, SVGItem* modelItem)
 {
-   QDomElement child = DOMElement.firstChildElement();
+   const QDomNamedNodeMap attributes = elem.attributes();
+   for (int i = 0; i < attributes.length(); ++i)
+   {
+      QDomAttr attr = attributes.item(i).toAttr();
+      if (!attr.isNull())
+      {
+         modelItem->setAttribute(attr.name(), attr.value());
+      }
+   }
+}
+
+void constructTreeModel(const QDomElement& elem, SVGItem* modelItem)
+{
+   QDomElement child = elem.firstChildElement();
    while (!child.isNull())
    {
       SVGItem* childItem = modelItem->appendChild(SVGItem::elementTypeFromString(child.tagName()));
-      constructModel(child, childItem);
+      setAttributesFromElem(child, childItem);
+      constructTreeModel(child, childItem);
       child = child.nextSiblingElement();
    }
 }
@@ -33,7 +47,7 @@ void printTree(SVGItem* item, int depth = 0)
 SVGModel::SVGModel(const QDomDocument& svg, QWidget* parent) : QAbstractItemModel(parent)
 {
    SVGItem* svgRoot = root_->appendChild(SVGElementType::svg);
-   constructModel(svg.documentElement(), svgRoot);
+   constructTreeModel(svg.documentElement(), svgRoot);
    printTree(root_.get());
 }
 
